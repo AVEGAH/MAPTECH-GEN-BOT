@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 # Telegram bot token obtained from BotFather
 TOKEN = '6760890328:AAFTyhR88Uf9pePTS3qemqQYDrvnNOR_oMk'
 
-# List of admin Telegram IDs (replace with actual IDs)
-ADMIN_IDS = {"5989863155", "admin_telegram_id2"}
+# List of admin Telegram IDs (replace with your actual ID)
+ADMIN_IDS = {"5989863155"}
 
 # Dictionary to store user privileges and their expiration timestamps
 user_privileges = {}
@@ -21,28 +21,18 @@ def is_admin(update):
 # Command to add a user as a regular user with a specified duration
 def add_user(update, context):
     if is_admin(update):
+        if len(context.args) != 2:
+            update.message.reply_text("Usage: /adduser <user_id> <duration_in_seconds>")
+            return
         user_id = str(context.args[0])
         duration = int(context.args[1])  # Duration in seconds
         expiration_time = datetime.now() + timedelta(seconds=duration)
         user_privileges[user_id] = {"type": "user", "expires": expiration_time}
         update.message.reply_text(f"User {user_id} added as a regular user for {duration} seconds.")
 
-# Command to add a user as an admin with a specified duration
-def add_admin(update, context):
-    if is_admin(update):
-        user_id = str(context.args[0])
-        duration = int(context.args[1])  # Duration in seconds
-        expiration_time = datetime.now() + timedelta(seconds=duration)
-        user_privileges[user_id] = {"type": "admin", "expires": expiration_time}
-        update.message.reply_text(f"User {user_id} added as an administrator for {duration} seconds.")
-
-# Command to remove a user
-def remove_user(update, context):
-    if is_admin(update):
-        user_id = str(context.args[0])
-        if user_id in user_privileges:
-            del user_privileges[user_id]
-            update.message.reply_text(f"User {user_id} removed.")
+# Function to send a welcome message
+def start(update, context):
+    update.message.reply_text("Welcome to the bot! This is a welcome message.")
 
 # Function to handle messages
 def echo(update, context):
@@ -57,30 +47,4 @@ def echo(update, context):
     else:
         update.message.reply_text("You are not authorized to use this bot.")
 
-# Function to restrict access to admin commands
-def restricted(func):
-    @wraps(func)
-    def wrapped(update, context, *args, **kwargs):
-        if is_admin(update):
-            return func(update, context, *args, **kwargs)
-        else:
-            update.message.reply_text("You are not authorized to perform this action.")
-    return wrapped
-
-def main():
-    # Create the bot updater and dispatcher
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    # Add command handlers
-    dp.add_handler(CommandHandler("adduser", restricted(add_user), pass_args=True))
-    dp.add_handler(CommandHandler("addadmin", restricted(add_admin), pass_args=True))
-    dp.add_handler(CommandHandler("removeuser", restricted(remove_user), pass_args=True))
-    dp.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
-
-    # Start the bot
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
+# Function to restrict acc
