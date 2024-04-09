@@ -6,10 +6,10 @@ from functools import wraps
 from datetime import datetime, timedelta
 
 # Telegram bot token obtained from BotFather
-TOKEN = 'your_bot_token_here'
+TOKEN = '6760890328:AAFTyhR88Uf9pePTS3qemqQYDrvnNOR_oMk'
 
 # List of admin Telegram IDs (replace with actual IDs)
-ADMIN_IDS = {"admin_telegram_id1", "admin_telegram_id2"}
+ADMIN_IDS = {"5989863155", "admin_telegram_id2"}
 
 # Dictionary to store user privileges and their expiration timestamps
 user_privileges = {}
